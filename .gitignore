@@ -1,0 +1,22 @@
+# Virtual environment
+venv/
+
+# Compiled Python files
+*.pyc
+
+# Log files
+*.log
+
+# Environment variables file
+.env
+
+# IDE and editor files
+.vscode/
+.idea/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Ignore uploaded files (if stored locally)
+static/uploads/
