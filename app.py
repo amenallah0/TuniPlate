@@ -1,7 +1,7 @@
 import os
 import cv2
 import numpy as np
-from flask import Flask, request, jsonify, send_from_directory, render_template
+from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'static/uploads/'
@@ -54,6 +54,7 @@ def detect_license_plate(image_path, net, layer_names_output, labels, probabilit
             detected_plates.append((plate_image, (x_min, y_min, box_width, box_height)))
 
     return image, detected_plates
+
 @app.route('/api/process-image', methods=['POST'])
 def process_image():
     data = request.get_json()
@@ -67,7 +68,7 @@ def process_image():
     image, detected_plates = detect_license_plate(file_path, net, layer_names_output, labels)
 
     if not detected_plates:
-        return jsonify({"message": "No license plate detected."}), 200
+        return jsonify({"message": "No license plate detected."}), 404
 
     plate_img, (x_min, y_min, box_width, box_height) = detected_plates[0]
 
