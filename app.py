@@ -4,7 +4,7 @@ import numpy as np
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'static/uploads/'
+app.config['UPLOAD_FOLDER'] = '/home/swolf/Documents/GitHub/myCarAPI/uploads/'
 
 # Ensure the upload directory exists
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
@@ -38,7 +38,7 @@ def detect_license_plate(image_path, net, layer_names_output, labels, probabilit
                 box = detection[0:4] * np.array([w, h, w, h])
                 x_center, y_center, box_width, box_height = box.astype('int')
                 x_min = int(x_center - (box_width / 2))
-                y_min = int(y_center - (box_height / 2))
+                y_min = int(y_center - (box_height / 2))  # Correct y_min calculation
                 bounding_boxes.append([x_min, y_min, int(box_width), int(box_height)])
                 confidences.append(float(confidence_current))
                 class_numbers.append(class_current)
@@ -58,7 +58,12 @@ def detect_license_plate(image_path, net, layer_names_output, labels, probabilit
 @app.route('/api/process-image', methods=['POST'])
 def process_image():
     data = request.get_json()
+    if 'file_path' not in data:
+        return jsonify({"message": "No file path provided"}), 400
+
     file_path = data['file_path']
+    if not os.path.isfile(file_path):
+        return jsonify({"message": "File not found"}), 404
 
     weights_path = 'yolo/lapi.weights'
     config_path = 'yolo/darknet-yolov3.cfg'
